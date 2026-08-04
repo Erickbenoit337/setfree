@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SetFree — Reclaim your freedom</title>
+<meta name="description" content="SetFree blocks adult content permanently on Android, Windows and Linux. Built by someone who struggled. Open source, free, invisible." />
+<meta property="og:title" content="SetFree — Reclaim your freedom" />
+<meta property="og:description" content="Open source content blocker for Android, Windows and Linux. No account. No subscription. No way back." />
+<meta name="theme-color" content="#0B1628" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --night:   #0B1628;
+    --deep:    #122040;
+    --sky:     #4A8FD4;
+    --gold:    #E8A93C;
+    --white:   #F0F4FF;
+    --muted:   #8B9DC3;
+    --card:    #132035;
+    --border:  #1E3050;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--night);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #1a3a6e22 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Dove SVG */
+  .dove-wrap {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 2rem;
+    animation: doveFly 1.4s cubic-bezier(.22,.68,0,1.2) both;
+  }
+
+  @keyframes doveFly {
+    from { transform: translateY(60px) scale(.7); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);  opacity: 1; }
+  }
+
+  .dove-wrap svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 24px #4A8FD455);
+  }
+
+  /* Wing animation */
+  .wing-top {
+    transform-origin: 50% 60%;
+    animation: wingFlap 3s ease-in-out infinite;
+  }
+  .wing-bot {
+    transform-origin: 50% 40%;
+    animation: wingFlap 3s ease-in-out infinite reverse;
+  }
+  @keyframes wingFlap {
+    0%, 100% { transform: rotate(0deg) scaleY(1); }
+    50%       { transform: rotate(-8deg) scaleY(.88); }
+  }
+
+  .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: .85rem;
+    font-weight: 600;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp .8s .3s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp .8s .5s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--sky);
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp .8s .7s forwards;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp .8s .9s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.6rem;
+    border-radius: 6px;
+    font-size: .95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #0006; }
+
+  .btn-primary {
+    background: var(--sky);
+    color: #fff;
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--sky); color: var(--sky); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+    color: var(--muted);
+    font-size: .75rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp .8s 1.4s forwards;
+  }
+  .scroll-hint span {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTIONS ─────────────────────────────── */
+  section { padding: 5rem 1.5rem; }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── STORY ────────────────────────────────── */
+  .story { background: var(--deep); }
+
+  .story-text {
+    font-size: 1.1rem;
+    color: #c8d4ee;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+  .story-text p + p { margin-top: 1.2rem; }
+
+  .story-text strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--gold);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--white);
+    line-height: 1.6;
+  }
+
+  /* ── HOW IT WORKS ─────────────────────────── */
+  .how { background: var(--night); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.8rem;
+  }
+
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #1a3a6e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .step h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: .5rem;
+    color: var(--white);
+  }
+
+  .step p {
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── DOWNLOAD ─────────────────────────────── */
+  .download { background: var(--deep); }
+
+  .platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .platform-card {
+    background: var(--night);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color .2s;
+  }
+  .platform-card:hover { border-color: var(--sky); }
+
+  .platform-icon {
+    font-size: 2.2rem;
+  }
+
+  .platform-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .platform-card p {
+    font-size: .88rem;
+    color: var(--muted);
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .2rem .6rem;
+    border-radius: 4px;
+    background: #1a3a6e;
+    color: var(--sky);
+    margin-bottom: .3rem;
+  }
+
+  .dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1.2rem;
+    background: var(--sky);
+    color: #fff;
+    border-radius: 6px;
+    font-size: .9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s, transform .15s;
+    width: fit-content;
+  }
+  .dl-btn:hover { background: #5fa0e0; transform: translateY(-1px); }
+
+  /* ── INSTALL ──────────────────────────────── */
+  .install { background: var(--night); }
+
+  .tabs {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: .5rem 1.2rem;
+    border-radius: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .tab.active, .tab:hover {
+    background: var(--sky);
+    border-color: var(--sky);
+    color: #fff;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .code-block {
+    background: #060e1a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: .8rem 0;
+    font-family: 'Courier New', monospace;
+    font-size: .88rem;
+    color: #7dd3fc;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  .code-block .comment { color: var(--muted); }
+
+  .install-step {
+    display: flex;
+    gap: 1rem;
+    margin: 1.2rem 0;
+    align-items: flex-start;
+  }
+
+  .install-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--sky);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    margin-top: .2rem;
+  }
+
+  .install-step p {
+    font-size: .95rem;
+    color: #c8d4ee;
+  }
+
+  /* ── COMMUNITY ────────────────────────────── */
+  .community { background: var(--deep); text-align: center; }
+
+  .community h2 { margin-bottom: 1rem; }
+
+  .community p {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+
+  .links-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .community-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1.3rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .9rem;
+    transition: all .15s;
+  }
+  .community-link:hover {
+    border-color: var(--sky);
+    color: var(--sky);
+  }
+
+  /* ── FOOTER ───────────────────────────────── */
+  footer {
+    background: var(--night);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--muted);
+    font-size: .85rem;
+  }
+
+  footer a {
+    color: var(--sky);
+    text-decoration: none;
+  }
+  footer a:hover { text-decoration: underline; }
+
+  .footer-dove {
+    font-size: 1.5rem;
+    margin-bottom: .5rem;
+  }
+
+  /* ── RESPONSIVE ───────────────────────────── */
+  @media (max-width: 600px) {
+    .btn-row { flex-direction: column; align-items: center; }
+    .steps, .platforms { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero">
+
+  <div class="dove-wrap">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Glow circle -->
+      <circle cx="100" cy="100" r="90" fill="#4A8FD408" />
+
+      <!-- Body -->
+      <ellipse cx="100" cy="108" rx="38" ry="22" fill="#F0F4FF" />
+
+      <!-- Head -->
+      <circle cx="134" cy="92" r="16" fill="#F0F4FF" />
+
+      <!-- Beak -->
+      <polygon points="148,91 160,95 148,99" fill="#E8A93C" />
+
+      <!-- Eye -->
+      <circle cx="138" cy="90" r="3" fill="#0B1628" />
+      <circle cx="139" cy="89" r="1" fill="white" />
+
+      <!-- Tail feathers -->
+      <ellipse cx="68" cy="112" rx="20" ry="8" fill="#dce8ff" transform="rotate(-20 68 112)" />
+      <ellipse cx="62" cy="118" rx="18" ry="6" fill="#c8d8f4" transform="rotate(-30 62 118)" />
+
+      <!-- Wing top -->
+      <ellipse class="wing-top" cx="96" cy="88" rx="42" ry="16"
+               fill="#dce8ff" transform="rotate(-18 96 88)" />
+
+      <!-- Wing bottom -->
+      <ellipse class="wing-bot" cx="92" cy="100" rx="36" ry="12"
+               fill="#c8d8f4" transform="rotate(-10 92 100)" />
+
+      <!-- Olive branch -->
+      <line x1="148" y1="99" x2="168" y2="114" stroke="#7cb87c" stroke-width="2.5" stroke-linecap="round"/>
+      <ellipse cx="163" cy="106" rx="6" ry="4" fill="#5a9e5a" transform="rotate(-30 163 106)" />
+      <ellipse cx="170" cy="112" rx="6" ry="4" fill="#6ab46a" transform="rotate(-10 170 112)" />
+      <ellipse cx="158" cy="115" rx="5" ry="3.5" fill="#5a9e5a" transform="rotate(-50 158 115)" />
+    </svg>
+  </div>
+
+  <p class="tagline">Open source · Free forever</p>
+
+  <h1>Set<em>Free</em></h1>
+
+  <p class="hero-sub">
+    A permanent content blocker for Android, Windows and Linux.
+    Built by someone who tried everything else first.
+  </p>
+
+  <div class="btn-row">
+    <a href="#download" class="btn btn-primary">
+      ↓ Download
+    </a>
+    <a href="https://github.com/erickbenoit337/setfree" class="btn btn-outline" target="_blank" rel="noopener">
+      ★ GitHub
+    </a>
+  </div>
+
+  <div class="scroll-hint">
+    scroll
+    <span></span>
+  </div>
+</section>
+
+<!-- ── STORY ─────────────────────────────────────────────────── -->
+<section class="story">
+  <div class="container">
+    <span class="section-label">The story behind it</span>
+    <h2>Built out of necessity</h2>
+
+    <div class="story-text">
+      <p>
+        This project was not born in a meeting room or a startup pitch.
+        It was born at <strong>2am</strong>, out of a struggle that millions of people share
+        but few talk about openly — an addiction to online pornography that
+        no app, no willpower tactic, and no blocker on the market could truly stop.
+      </p>
+
+      <blockquote>
+        "I tried everything. Extensions. App timers. Cold turkey. Nothing held.
+        So I decided to build something that I could not undo on an impulse."
+      </blockquote>
+
+      <p>
+        The developer behind SetFree spent weeks studying how Android, Windows
+        and Linux handle DNS, networking and accessibility permissions —
+        and engineering a solution that works <strong>at the system level</strong>,
+        not just on the surface. No account. No subscription. No toggle that
+        disappears the moment temptation arrives.
+      </p>
+
+      <p>
+        SetFree is shared freely because addiction does not care about your income.
+        If it helps one person reclaim their time, their focus, or their relationships —
+        it was worth building.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────── -->
+<section class="how">
+  <div class="container">
+    <span class="section-label">How it works</span>
+    <h2>Silent, persistent, everywhere</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">🛡️</div>
+        <h3>System-level blocking</h3>
+        <p>Works at the OS level — not as a browser extension that can be removed in seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">👁️‍🗨️</div>
+        <h3>Invisible by design</h3>
+        <p>No icon. No name you recognise. Looks like a system component — because it acts like one.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔄</div>
+        <h3>Survives reboots</h3>
+        <p>Starts automatically with your device. Restores itself if something tries to disable it.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🌐</div>
+        <h3>Cloudflare Family DNS</h3>
+        <p>Pairs with Cloudflare's family filter — blocking millions of domains, updated daily.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔒</div>
+        <h3>Friction by intent</h3>
+        <p>Disabling it requires multiple deliberate steps. Enough time for the impulse to pass.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔓</div>
+        <h3>Open source</h3>
+        <p>Every line of code is public. No data collection. No telemetry. Ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOWNLOAD ───────────────────────────────────────────────── -->
+<section class="download" id="download">
+  <div class="container">
+    <span class="section-label">Download</span>
+    <h2>Choose your platform</h2>
+
+    <div class="platforms">
+
+      <div class="platform-card">
+        <div class="platform-icon">🤖</div>
+        <span class="badge">Android 10+</span>
+        <h3>Android</h3>
+        <p>
+          Accessibility service + Private DNS. Works alongside your existing VPN.
+          No root required. Invisible after setup.
+        </p>
+        <a href="https://github.com/erickbenoit337/setfree/releases/latest/download/SetFree-android.apk"
+           class="dl-btn" download>
+          ↓ Download APK
+        </a>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-icon">🪟</div>
+        <span class="badge">Windows 10 / 11</span>
+        <h3>Windows</h3>
+        <p>
+          Windows Service + hosts file. Blocks all browsers including Edge and Chrome.
+          Installs in 60 seconds via PowerShell.
+        </p>
+        <a href="https://github.com/erickbenoit337/setfree/releases/latest/download/SetFree-windows.zip"
+           class="dl-btn" download>
+          ↓ Download ZIP
+        </a>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-icon">🐧</div>
+        <span class="badge">Kali · Ubuntu · Debian</span>
+        <h3>Linux</h3>
+        <p>
+          systemd service + iptables DNS redirect + immutable hosts file.
+          One command install. Works on any Debian-based system.
+        </p>
+        <a href="https://github.com/erickbenoit337/setfree/releases/latest/download/SetFree-linux.zip"
+           class="dl-btn" download>
+          ↓ Download ZIP
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── INSTALL ────────────────────────────────────────────────── -->
+<section class="install">
+  <div class="container">
+    <span class="section-label">Installation</span>
+    <h2>Up and running in minutes</h2>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('android')">Android</button>
+      <button class="tab" onclick="showTab('windows')">Windows</button>
+      <button class="tab" onclick="showTab('linux')">Linux</button>
+    </div>
+
+    <!-- ANDROID -->
+    <div class="tab-content active" id="tab-android">
+      <div class="install-step">
+        <div class="install-num">1</div>
+        <p>Download the APK and transfer it to your Android phone (Google Drive, email, etc.)</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">2</div>
+        <p>Open the APK on your phone. If Android blocks it: <strong>Settings → Security → Unknown sources → Allow</strong></p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">3</div>
+        <p>Open the app → tap <strong>Initialize</strong> → grant VPN permission → grant Admin permission</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">4</div>
+        <p>In Accessibility settings, enable <strong>Android Services Manager</strong></p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">5</div>
+        <p>The app closes automatically. The icon disappears. Protection is active.</p>
+      </div>
+    </div>
+
+    <!-- WINDOWS -->
+    <div class="tab-content" id="tab-windows">
+      <div class="install-step">
+        <div class="install-num">1</div>
+        <p>Install <a href="https://python.org" target="_blank" style="color:var(--sky)">Python 3</a> if not already installed</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">2</div>
+        <p>Extract the ZIP, then open <strong>PowerShell as Administrator</strong> (right-click → Run as admin)</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">3</div>
+        <div>
+          <p>Run:</p>
+          <div class="code-block">cd path\to\setfree-windows
+python install.py</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-num">4</div>
+        <p>Done. The service runs silently. It restarts automatically with Windows.</p>
+      </div>
+    </div>
+
+    <!-- LINUX -->
+    <div class="tab-content" id="tab-linux">
+      <div class="install-step">
+        <div class="install-num">1</div>
+        <p>Extract the ZIP</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">2</div>
+        <div>
+          <p>Run as root:</p>
+          <div class="code-block">sudo python3 install.py</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-num">3</div>
+        <div>
+          <p>Verify:</p>
+          <div class="code-block">systemctl status systemd-networkd-helper</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-num">4</div>
+        <p>Done. Active on every boot. iptables rules redirect all DNS to Cloudflare Family.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── COMMUNITY ──────────────────────────────────────────────── -->
+<section class="community">
+  <div class="container">
+    <span class="section-label">Community</span>
+    <h2>You are not alone</h2>
+    <p>
+      Millions of people are fighting the same battle.
+      These communities have helped many find their way back.
+    </p>
+    <div class="links-row">
+      <a href="https://reddit.com/r/pornfree" target="_blank" rel="noopener" class="community-link">
+        r/pornfree — 170k members
+      </a>
+      <a href="https://reddit.com/r/NoFap" target="_blank" rel="noopener" class="community-link">
+        r/NoFap — 1.2M members
+      </a>
+      <a href="https://github.com/erickbenoit337/setfree" target="_blank" rel="noopener" class="community-link">
+        ★ Star on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-dove">🕊️</div>
+  <p>
+    SetFree is open source and free, forever. &nbsp;·&nbsp;
+    <a href="https://github.com/erickbenoit337/setfree" target="_blank" rel="noopener">GitHub</a>
+    &nbsp;·&nbsp;
+    MIT License
+  </p>
+  <p style="margin-top:.5rem; font-size:.8rem;">
+    No data collected. No account required. No strings attached.
+  </p>
+</footer>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
