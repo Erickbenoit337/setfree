@@ -604,11 +604,11 @@
     <div class="platforms">
 
       <div class="platform-card">
-        <span class="badge">Android 10+</span>
+        <span class="badge">Android 8.0+</span>
         <h3>Android</h3>
         <p>
-          Accessibility service and Private DNS. Works alongside your existing VPN.
-          No root required. Invisible after setup.
+          Accessibility-based content filtering with a self-updating open blocklist.
+          No VPN, no root required. Icon disappears once setup is complete.
         </p>
         <a href="https://github.com/erickbenoit337/setfree/releases/latest/download/SetFree-android.apk"
            class="dl-btn" download>Download APK</a>
@@ -662,15 +662,23 @@
       </div>
       <div class="install-step">
         <div class="install-num">3</div>
-        <p>Open the app, tap Initialize, grant VPN permission, then grant Admin permission.</p>
+        <p>Open the app once installed. In the setup screen, tap "Open accessibility settings" and switch the toggle on for the app — this is a real system toggle, opening the screen alone is not enough.</p>
       </div>
       <div class="install-step">
         <div class="install-num">4</div>
-        <p>In Accessibility settings, enable Android Services Manager.</p>
+        <p>Tap "Enable admin rights" and confirm. This adds a confirmation step before the protection can ever be turned off.</p>
       </div>
       <div class="install-step">
         <div class="install-num">5</div>
-        <p>The app closes automatically. The icon disappears. Protection is active.</p>
+        <p>Tap "Download blocklist" with an active internet connection. Wait until it shows the number of domains loaded — filtering stays off until this succeeds.</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">6</div>
+        <p>Optional but recommended: disable battery optimization for the app, so the system doesn't kill the background service.</p>
+      </div>
+      <div class="install-step">
+        <div class="install-num">7</div>
+        <p>Tap the final "Finish — activate and hide" button. It checks accessibility and the blocklist are ready, then removes the app icon and closes. Protection is active and starts automatically on every reboot.</p>
       </div>
     </div>
 
